@@ -512,6 +512,7 @@ lv_obj_clear_state(ui_rdacb, LV_STATE_CHECKED);
 void map_event(lv_event_t *e)
 {
     lv_scr_load(ui_Screen4);
+    delay(100);  // Allow screen to fully initialize before processing events
     display_mode = 1;
     device_m.println("D1");
     device_footprint = 11;
@@ -1120,6 +1121,7 @@ void confirm_no(lv_event_t *e)
     }else if (confirm == 6)
     {
         lv_scr_load(ui_Screen4);
+        delay(100);  // Allow screen to fully initialize before processing events
         confirm = 0;
     }else if (confirm == 8)
     {
