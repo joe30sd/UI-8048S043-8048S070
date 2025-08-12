@@ -1,5 +1,5 @@
 #define LGFX_USE_V1
-#define SCREEN_7  // veya SCREEN_7 tanımını aktif et
+#define SCREEN_4_3  // veya SCREEN_7 tanımını aktif et
 
 #include <LovyanGFX.hpp>
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>

@@ -1904,10 +1904,10 @@ device_footprint = 51;
 
 
  
-    o_timer++;
-    if (o_timer > 1000)
+    static unsigned long last_update = 0;
+    if (millis() - last_update > 100)  // Update every 100ms instead of every 1000 iterations
     {
-        o_timer = 0;
+        last_update = millis();
         console_m.println("*****o_timer*****");
         if (display_mode == 1)
         {
@@ -2159,8 +2159,11 @@ device_footprint = 51;
     }
 
     if(display_updater == 1){
-     update_counter++;
-     delay(100);
+     static unsigned long last_update_check = 0;
+     if(millis() - last_update_check > 100) {
+       last_update_check = millis();
+       update_counter++;
+     }
     if(update_counter == 60){
      lv_textarea_add_text(ui_dbta, "\n **** DISPLAY GOING OFF ****");
      }
@@ -2171,5 +2174,4 @@ device_footprint = 51;
      }
     
     }
-
 }
