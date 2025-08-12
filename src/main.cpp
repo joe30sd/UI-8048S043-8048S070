@@ -1617,7 +1617,14 @@ if(diag_t == 1){
     self_tester = 19;
 device_footprint = 50;
 
-
+//
+lv_scr_load(ui_Screen3);
+device_m.println("D0");
+display_mode = 0;
+display_mode_flag = 0;
+self_tester = 19;
+//
+    
     }
 #if defined(SELF_TESTER_ON)
    if(self_tester == 0){
