@@ -1614,9 +1614,10 @@ if(diag_t == 1){
     saving_data();
     } else if (self_tester == 18 && millis() - diag_counter > 15000 ){
     lv_obj_clear_flag(ui_mbft, LV_OBJ_FLAG_HIDDEN);
-    self_tester = 19;
+    self_tester = 20;  // New intermediate state to show warning
+    diag_counter = millis();  // Reset timer for warning display
 device_footprint = 50;
-
+    } else if (self_tester == 20 && millis() - diag_counter > 3000 ){  // Show warning for 3 seconds
 //
 lv_scr_load(ui_Screen3);
 device_m.println("D0");
