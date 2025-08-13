@@ -21,10 +21,15 @@ LGFX gfx;
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
 {
-    gfx.startWrite();
-    gfx.setAddrWindow( area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1 );
-    gfx.writePixels( ( lgfx::rgb565_t* )&color_p->full, (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) );
-    gfx.endWrite();
+    if (gfx.getStartCount() == 0)
+    {   // Processing if not yet started
+        gfx.startWrite();
+    }
+    gfx.pushImageDMA( area->x1
+                    , area->y1
+                    , area->x2 - area->x1 + 1
+                    , area->y2 - area->y1 + 1
+                    , ( lgfx::rgb565_t* )&color_p->full);
     lv_disp_flush_ready( disp );
 }
 
@@ -32,7 +37,6 @@ void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
 /*Read the touchpad*/
 void my_touchpad_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
 {
-    static uint16_t last_x = 0, last_y = 0;
     uint16_t touchX, touchY;
 
     data->state = LV_INDEV_STATE_REL;
@@ -40,16 +44,10 @@ void my_touchpad_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
     if( gfx.getTouch( &touchX, &touchY ) )
     {
         data->state = LV_INDEV_STATE_PR;
+
+        /*Set the coordinates*/
         data->point.x = touchX;
         data->point.y = touchY;
-        last_x = touchX;
-        last_y = touchY;
-    }
-    else 
-    {
-        // Keep last known position for smoother release
-        data->point.x = last_x;
-        data->point.y = last_y;
     }
 }
 

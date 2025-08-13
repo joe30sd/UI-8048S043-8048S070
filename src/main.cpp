@@ -512,7 +512,6 @@ lv_obj_clear_state(ui_rdacb, LV_STATE_CHECKED);
 void map_event(lv_event_t *e)
 {
     lv_scr_load(ui_Screen4);
-    delay(100);  // Allow screen to fully initialize before processing events
     display_mode = 1;
     device_m.println("D1");
     device_footprint = 11;
@@ -1121,7 +1120,6 @@ void confirm_no(lv_event_t *e)
     }else if (confirm == 6)
     {
         lv_scr_load(ui_Screen4);
-        delay(100);  // Allow screen to fully initialize before processing events
         confirm = 0;
     }else if (confirm == 8)
     {
@@ -1616,18 +1614,10 @@ if(diag_t == 1){
     saving_data();
     } else if (self_tester == 18 && millis() - diag_counter > 15000 ){
     lv_obj_clear_flag(ui_mbft, LV_OBJ_FLAG_HIDDEN);
-    self_tester = 20;  // New intermediate state to show warning
-    diag_counter = millis();  // Reset timer for warning display
+    self_tester = 19;
 device_footprint = 50;
-    } else if (self_tester == 20 && millis() - diag_counter > 3000 ){  // Show warning for 3 seconds
-//
-lv_scr_load(ui_Screen3);
-device_m.println("D0");
-display_mode = 0;
-display_mode_flag = 0;
-self_tester = 19;
-//
-    
+
+
     }
 #if defined(SELF_TESTER_ON)
    if(self_tester == 0){
@@ -1914,10 +1904,10 @@ device_footprint = 51;
 
 
  
-    static unsigned long last_update = 0;
-    if (millis() - last_update > 100)  // Update every 100ms instead of every 1000 iterations
+    o_timer++;
+    if (o_timer > 1000)
     {
-        last_update = millis();
+        o_timer = 0;
         console_m.println("*****o_timer*****");
         if (display_mode == 1)
         {
@@ -2169,11 +2159,8 @@ device_footprint = 51;
     }
 
     if(display_updater == 1){
-     static unsigned long last_update_check = 0;
-     if(millis() - last_update_check > 100) {
-       last_update_check = millis();
-       update_counter++;
-     }
+     update_counter++;
+     delay(100);
     if(update_counter == 60){
      lv_textarea_add_text(ui_dbta, "\n **** DISPLAY GOING OFF ****");
      }
@@ -2184,4 +2171,5 @@ device_footprint = 51;
      }
     
     }
+
 }
