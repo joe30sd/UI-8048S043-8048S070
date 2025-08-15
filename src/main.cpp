@@ -43,7 +43,7 @@ const int chipSelect = 10;
 //#define SELF_TEST_ON
 int minutesPassed = 0, o_timer = 0 ;
 float live_magnet_current = 0, live_magnet_voltage = 0, magnet_current = 0, magnet_voltage = 0, resistor_value = 0;
-float main_voltage = 0, main_current = 0, att_current = 0, rda_current = 0, rda_voltage = 0, att_voltage = 0,ts_voltage = 0, c_clb1 = 0, c_clb2 = 0 , c_clb3 = 0, v_clb1 = 1.3;
+float main_voltage = 0, main_current = 0, att_current = 0, rda_current = 0, rda_voltage = 0, att_voltage = 0,ts_voltage = 0, c_clb1 = 0, c_clb2 = 0 , c_clb3 = 0, v_clb1 = 0;
 int self_tester = 17,self_tester_counter = 0, display_mode_flag = 0,rdf_flag = 0;
 float u_target_current, u_inc_current;
 uint8_t up_mode = 0, confirm = 0, up_done = 0, G_MODE = 0;

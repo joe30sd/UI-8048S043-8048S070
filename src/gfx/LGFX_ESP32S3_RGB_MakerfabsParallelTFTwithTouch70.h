@@ -1,5 +1,5 @@
 #define LGFX_USE_V1
-#define SCREEN_4_3  // veya SCREEN_7 tanımını aktif et
+#define SCREEN_4_3
 
 #include <LovyanGFX.hpp>
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
@@ -59,7 +59,7 @@ public:
       cfg.pin_vsync   = GPIO_NUM_41;
       cfg.pin_hsync   = GPIO_NUM_39;
       cfg.pin_pclk    = GPIO_NUM_42;
-      cfg.freq_write  = 14500000;
+      cfg.freq_write  = 15000000;
 
       cfg.hsync_pulse_width = 4;
       cfg.vsync_pulse_width = 4;
