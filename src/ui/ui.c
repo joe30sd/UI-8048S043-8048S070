@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include "ui_helpers.h"
+#include "../event_handlers.h"
 
 ///////////////////// VARIABLES ////////////////////
 

@@ -1,0 +1,106 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// Network Configuration
+#define WIFI_SSID "Modric"
+#define WIFI_PASSWORD "arctic9744"
+#define FIRMWARE_URL "https://raw.githubusercontent.com/byronin/rnn-bins/main/firmware.bin"
+
+// Hardware Configuration
+#define EEPROM_SIZE 1
+#define SD_CHIP_SELECT 10
+
+// Serial Configuration
+#define CONSOLE_BAUD_RATE 115200
+#define DEVICE_BAUD_RATE 115200
+
+// Serial Pin Configuration (for ESP32-S3)
+#define CONSOLE_RX_PIN 17
+#define CONSOLE_TX_PIN 18
+
+// Compilation Flags
+#define FOUR_ON
+// #define SELF_TEST_ON
+
+// Device Addresses
+#define PSU_DEVICE_ADDR_1 1
+#define PSU_DEVICE_ADDR_2 2
+
+// Power Supply Limits
+#define PSU_MAX_VOLTAGE 30.0f
+#define PSU_MAX_CURRENT 10.0f
+#define PSU_DEFAULT_VOLTAGE 22.0f
+#define PSU_DEFAULT_CURRENT_1 0.85f
+#define PSU_DEFAULT_CURRENT_2 0.75f
+
+// Timing Constants
+#define MAIN_LOOP_DELAY_MS 1
+#define O_TIMER_THRESHOLD 1000
+#define SELF_TEST_TIMEOUT_MS 15000
+#define DIAGNOSTIC_TIMEOUT_SHORT_MS 20000
+#define DIAGNOSTIC_TIMEOUT_MEDIUM_MS 60000
+#define DIAGNOSTIC_TIMEOUT_LONG_MS 90000
+
+// Probe Test Constants
+#define PROBE_TEST_CURRENT 300.0f
+#define PROBE_TEST_VOLTAGE 600.0f
+#define PROBE_CURRENT_THRESHOLD 1.00f
+#define PROBE_VOLTAGE_THRESHOLD 3.0f
+#define PROBE_MAX_ATTEMPTS 10
+
+// Communication Protocol Constants
+#define FRAME_SIZE 20
+#define FRAME_HEADER 0xAA
+#define CHECKSUM_SIZE 1
+#define ARGS_SIZE 16
+
+// Display Update Status Codes
+enum DisplayUpdateStatus {
+    UPDATE_NONE = 0,
+    UPDATE_REQUESTED = 1,
+    UPDATE_WIFI_ERROR = 4,
+    UPDATE_HTTP_ERROR = 5,
+    UPDATE_STORE_ERROR = 6,
+    UPDATE_UNKNOWN_ERROR = 7,
+    UPDATE_SUCCESSFUL = 8
+};
+
+// Device Footprint Codes
+enum DeviceFootprint {
+    FOOTPRINT_SHIM_TEST = 1,
+    FOOTPRINT_MAIN_TEST = 2,
+    FOOTPRINT_RDA_TEST = 3,
+    FOOTPRINT_PSU_COMM_TEST = 4,
+    FOOTPRINT_PSU_QUICK_TEST = 5,
+    FOOTPRINT_PSU_FUNC_TEST = 6,
+    FOOTPRINT_DIAGNOSTIC_BACK = 7,
+    FOOTPRINT_MAIN_UPDATE_NO = 8,
+    FOOTPRINT_DISPLAY_UPDATE_REQ = 9,
+    FOOTPRINT_DISPLAY_UPDATE_NO = 10,
+    FOOTPRINT_MAP_MODE = 11,
+    FOOTPRINT_DIAGNOSTIC_MODE = 13,
+    FOOTPRINT_RAMP_DOWN_MODE = 14,
+    FOOTPRINT_MANUAL_RESET = 15,
+    FOOTPRINT_RESISTANCE_READ = 16,
+    FOOTPRINT_PROBE_TEST = 17,
+    FOOTPRINT_RAMP_UP_SETUP = 19,
+    FOOTPRINT_OPERATION_START = 20,
+    FOOTPRINT_OPERATION_STOP = 21,
+    FOOTPRINT_OPERATION_PAUSE = 22,
+    FOOTPRINT_OPERATION_RESUME = 23,
+    FOOTPRINT_OPERATION_ABORT = 24,
+    FOOTPRINT_TARGET_ADJUST = 26,
+    FOOTPRINT_TARGET_SET = 27,
+    FOOTPRINT_RAMP_DOWN_SETUP_NO_RDA = 28,
+    FOOTPRINT_RAMP_DOWN_SETUP_RDA = 29,
+    FOOTPRINT_CANCEL = 30,
+    FOOTPRINT_DISPLAY_IDLE = 51,
+    FOOTPRINT_DISPLAY_RESET = 52,
+    FOOTPRINT_SELF_TEST_TIMEOUT = 50
+};
+
+// Ramp Up Current Steps (Amperes)
+const float RAMP_UP_STEPS[] = {0.5, 0.6, 0.7, 0.8, 0.9, 1.00, 1.50, 2.00, 2.50, 3.00, 5.00, 10.00};
+#define RAMP_UP_STEPS_COUNT (sizeof(RAMP_UP_STEPS) / sizeof(RAMP_UP_STEPS[0]))
+
+#endif // CONFIG_H
