@@ -41,10 +41,21 @@ const char* firmwareUrl = "https://raw.githubusercontent.com/byronin/rnn-bins/ma
 const int chipSelect = 10;
 
 //#define SELF_TEST_ON
+
+// Ramp Down Flag States
+enum RampDownState {
+    RAMPDOWN_INIT = 0,           // Initial state - show "Wait 3 min to engage power"
+    RAMPDOWN_POWER_WAIT = 1,     // Waiting for main heater to become active
+    RAMPDOWN_HEATER_ACTIVE = 2,  // Main heater active - 3 minute wait before ramp down
+    RAMPDOWN_ACTIVE = 3,         // Ramp down process started
+    RAMPDOWN_COMPLETE = 4        // Operation complete
+};
+
 int minutesPassed = 0, o_timer = 0 ;
 float live_magnet_current = 0, live_magnet_voltage = 0, magnet_current = 0, magnet_voltage = 0, resistor_value = 0;
 float main_voltage = 0, main_current = 0, att_current = 0, rda_current = 0, rda_voltage = 0, att_voltage = 0,ts_voltage = 0, c_clb1 = 0, c_clb2 = 0 , c_clb3 = 0, v_clb1 = 0;
-int self_tester = 17,self_tester_counter = 0, display_mode_flag = 0,rdf_flag = 0;
+int self_tester = 17,self_tester_counter = 0, display_mode_flag = 0;
+RampDownState rdf_flag = RAMPDOWN_INIT;
 float u_target_current, u_inc_current;
 uint8_t up_mode = 0, confirm = 0, up_done = 0, G_MODE = 0;
 char stc_buffer[100];
@@ -671,10 +682,7 @@ void ossb_event(lv_event_t *e)
 
 if(confirm == 1 || confirm == 2 ){
 
-    if (up_mode == 1 && up_done == 0)
-    {
-   lv_textarea_add_text(ui_ota, "\n **Wait for communication**");
-    }else if (up_mode == 1 && up_done == 1)
+    if (up_mode == 1)  // Skip communication wait - go directly to active mode
     {
         lv_obj_set_style_bg_color(ui_ossb, lv_color_hex(0x08FF80), LV_PART_MAIN | LV_STATE_DEFAULT);
         up_mode = 2;
@@ -2089,9 +2097,9 @@ device_footprint = 51;
         else if (display_mode == 3)
         {
             
-            if(rdf_flag == 0){
+            if(rdf_flag == RAMPDOWN_INIT){
                 lv_textarea_add_text(ui_ota, "\n Wait 3 min to engage power");
-                rdf_flag = 1;
+                rdf_flag = RAMPDOWN_POWER_WAIT;
 
             }
             lv_spinbox_set_value(ui_ocd, live_magnet_current * 100);
@@ -2108,17 +2116,17 @@ device_footprint = 51;
                 else
                 {
                     lv_obj_add_state(ui_mainof, LV_STATE_CHECKED);
-               if(rdf_flag == 1){
+               if(rdf_flag == RAMPDOWN_POWER_WAIT){
                 lv_textarea_add_text(ui_ota, "\n **Main Heater Active**");
                 //lv_textarea_add_text(ui_ota, "\n Wait 1 min to engage Heater");
-                rdf_flag = 2;
+                rdf_flag = RAMPDOWN_HEATER_ACTIVE;
 
             }
                     
                 }
 
-                if(minutesPassed > 3 && rdf_flag == 2 ){
-                    rdf_flag = 3;
+                if(minutesPassed > 3 && rdf_flag == RAMPDOWN_HEATER_ACTIVE ){
+                    rdf_flag = RAMPDOWN_ACTIVE;
                     lv_textarea_add_text(ui_ota, "\n Ramp Down Start");
                 }
                  if (rda_relay == 0)
@@ -2131,17 +2139,17 @@ device_footprint = 51;
                 }
             if(live_magnet_current < 0.5 && d_mode > 3  && minutesPassed > 3){
 
-                if(rdf_flag == 3){
+                if(rdf_flag == RAMPDOWN_ACTIVE){
              lv_textarea_add_text(ui_ota, "\n Operation is Done Wait 3min!");
-             rdf_flag = 4;
+             rdf_flag = RAMPDOWN_COMPLETE;
                 }
             }
             
             if (d_mode == 5)
             {
-                if(rdf_flag == 3 && live_magnet_current < 0.5 && d_mode > 3 ){
+                if(rdf_flag == RAMPDOWN_ACTIVE && live_magnet_current < 0.5 && d_mode > 3 ){
              lv_textarea_add_text(ui_ota, "\n Operation is Done Wait !");
-             rdf_flag = 4;
+             rdf_flag = RAMPDOWN_COMPLETE;
                 }
                 delay(1000);
                 lv_scr_load(ui_Screen3);
