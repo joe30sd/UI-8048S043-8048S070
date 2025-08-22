@@ -247,32 +247,7 @@ void setup() {
 
   EEPROM.begin(EEPROM_SIZE);
   
-  
-  display_updater  = EEPROM.read(0);
-
-  if(display_updater == 1){
-  //lv_label_set_text(ui_mbft, "Uing");
-  display_updater = 5; 
-  EEPROM.write(0, display_updater);
-  EEPROM.commit();
-  console_m.println("UPDATE START");
-  performOTAUpdate();
-  
-
-    if (!SD.begin(chipSelect)) { console_m.println("Card Mount Failed"); return; }
-
-  currentDataFile = nextDataFilename();         
-  console_m.print("Log file: ");
-  console_m.println(currentDataFile);
-
-  
-  }
-
-
-
-
-  gui_start();
-
+  // Initialize SD card first before any SD operations
   if (!SD.begin(chipSelect)) {
     console_m.println("Card Mount Failed");
     return;
@@ -283,8 +258,23 @@ void setup() {
     return;
   }
   console_m.println("SD card initialized.");
+  
+  display_updater = EEPROM.read(0);
 
+  if(display_updater == 1){
+    //lv_label_set_text(ui_mbft, "Uing");
+    display_updater = 5; 
+    EEPROM.write(0, display_updater);
+    EEPROM.commit();
+    console_m.println("UPDATE START");
+    performOTAUpdate();
+    
+    currentDataFile = nextDataFilename();         
+    console_m.print("Log file: ");
+    console_m.println(currentDataFile);
+  }
 
+  gui_start();
 }
 
 
