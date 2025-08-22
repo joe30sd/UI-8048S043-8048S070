@@ -638,10 +638,19 @@ void attob_event(lv_event_t *e)
 void usb_event(lv_event_t *e)
 {
     // Your code here
-    if(intToFloat(lv_spinbox_get_value(ui_utcd), 2) < 1){
+    console_m.println("DEBUG: usb_event() called - Ramp Up button pressed");
+    float target_current = intToFloat(lv_spinbox_get_value(ui_utcd), 2);
+    console_m.print("DEBUG: Target current: ");
+    console_m.println(target_current);
+    
+    if(target_current < 1){
+        console_m.println("DEBUG: Target current < 1, setting to 1.20A");
         lv_spinbox_set_value(ui_utcd, 120 );
     }
+    console_m.print("DEBUG: Setting confirm = 1, current confirm = ");
+    console_m.println(confirm);
     confirm = 1;
+    console_m.println("DEBUG: Loading confirmation screen (ui_Screen9)");
     lv_scr_load(ui_Screen9);
 }
 
@@ -658,23 +667,36 @@ void ossb_event(lv_event_t *e)
     
      //lv_obj_add_state(ui_axof, LV_STATE_CHECKED); //ronin
     //  Your code here
+    
+    console_m.println("DEBUG: ossb_event() called - Start/Stop button pressed");
+    console_m.print("DEBUG: confirm = ");
+    console_m.print(confirm);
+    console_m.print(", up_mode = ");
+    console_m.print(up_mode);
+    console_m.print(", up_done = ");
+    console_m.println(up_done);
 
 if(confirm == 1 || confirm == 2 ){
-
+    console_m.println("DEBUG: In ramp up mode (confirm == 1 or 2)");
+    
     if (up_mode == 1 && up_done == 0)
     {
-   lv_textarea_add_text(ui_ota, "\n **Wait for communication**");
+        console_m.println("DEBUG: up_mode=1, up_done=0 - Waiting for communication");
+        lv_textarea_add_text(ui_ota, "\n **Wait for communication**");
     }else if (up_mode == 1 && up_done == 1)
     {
+        console_m.println("DEBUG: up_mode=1, up_done=1 - Starting ramp up process");
         lv_obj_set_style_bg_color(ui_ossb, lv_color_hex(0x08FF80), LV_PART_MAIN | LV_STATE_DEFAULT);
         up_mode = 2;
         device_m.println("U2");
+        console_m.println("DEBUG: Sent U2 command to device, changed up_mode to 2");
         lv_textarea_add_text(ui_ota, "\n Main Heater Active");
         lv_textarea_add_text(ui_ota, "\n Axial Coil Active");
         lv_textarea_add_text(ui_ota, "\n **Please Wait Adjusting Ramp Up**");
     }
     else if (up_mode == 3)
     {
+        console_m.println("DEBUG: up_mode=3 - Wait engage operation");
         lv_textarea_add_text(ui_ota, "\n **Wait engage operation**");
     }
     else if (up_mode == 4 && up_done != 4)
@@ -698,8 +720,9 @@ if(confirm == 1 || confirm == 2 ){
     console_m.println(up_mode);
 
     device_footprint = 20;
-      saving_data();
+    saving_data();
 } else if(confirm == 4){
+    console_m.println("DEBUG: In ramp down mode (confirm == 4)");
 
 if (d_mode == 0){
     device_m.println("U1");
@@ -735,7 +758,10 @@ if (d_mode == 0){
     
 }
 device_footprint = 21;
-      saving_data();
+    saving_data();
+} else {
+    console_m.print("DEBUG: ossb_event() - Unexpected confirm value: ");
+    console_m.println(confirm);
 }
 
     
@@ -916,13 +942,22 @@ void t_current_i(lv_event_t *e)
 void confirm_yes(lv_event_t *e)
 {
     // Your code here
+    console_m.println("DEBUG: confirm_yes() called");
+    console_m.print("DEBUG: confirm value = ");
+    console_m.println(confirm);
+    
     if (confirm == 1)
     {
-
+        console_m.println("DEBUG: Ramp up confirmation (confirm == 1) - Setting up ramp up operation");
+        
         lv_textarea_set_text(ui_ota, " ");
         lv_textarea_set_text(ui_tta, " ");
         console_m.println("usb");
         u_target_current = intToFloat(lv_spinbox_get_value(ui_utcd), 2);
+        
+        console_m.print("DEBUG: Target current set to: ");
+        console_m.println(u_target_current);
+        
         device_m.print("T");
         device_m.println(u_target_current);
         console_m.print("T");
@@ -930,14 +965,24 @@ void confirm_yes(lv_event_t *e)
         sprintf(stc_buffer, "                     Ramp Up Operation        Target Current: %.2f A                 ", u_target_current);
         lv_label_set_text(ui_Label22, stc_buffer);
         u_inc_current = u_increasing_mode[lv_dropdown_get_selected(ui_uid)];
+        
+        console_m.print("DEBUG: Increment current set to: ");
+        console_m.println(u_inc_current);
+        
         device_m.print("I");
         device_m.println(u_inc_current);
         console_m.print("I");
         console_m.println(u_inc_current);
+        
+        console_m.println("DEBUG: Sending initialization commands A1, M1, U1");
         device_m.println("A1");
         device_m.println("M1");
         device_m.println("U1");
+        
         up_mode = 1;
+        console_m.print("DEBUG: Set up_mode = ");
+        console_m.println(up_mode);
+        
         lv_scr_load(ui_Screen6);
         lv_obj_set_style_bg_color(ui_ossb, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_bar_set_range(ui_opb, 0, int(u_target_current));
@@ -945,6 +990,7 @@ void confirm_yes(lv_event_t *e)
         lv_textarea_add_text(ui_ota, "\n Press Start for operation!");
         device_footprint = 19;
         saving_data();
+        console_m.println("DEBUG: Ramp up initialization complete");
     }
     else if (confirm == 2)
     {
@@ -1849,10 +1895,14 @@ device_footprint = 51;
         else if (s_cmd.startsWith("UP")) //  current up mode status for ramp-up
         {
             up_mode = s_cmd.substring(2).toInt();
+            console_m.print("DEBUG: Received up_mode from device: ");
+            console_m.println(up_mode);
         }
         else if (s_cmd.startsWith("UD")) // up mode done flag
         {
             up_done = s_cmd.substring(2).toInt();
+            console_m.print("DEBUG: Received up_done from device: ");
+            console_m.println(up_done);
         }
         else if (s_cmd.startsWith("DM")) // display number
         {
@@ -1910,20 +1960,27 @@ device_footprint = 51;
         }
         else if (display_mode == 2)
         {
+            console_m.print("DEBUG: Main loop - display_mode=2 (ramp up), up_mode=");
+            console_m.print(up_mode);
+            console_m.print(", up_done=");
+            console_m.println(up_done);
             
             if (up_done == 2 && up_mode == 2)
             {
+                console_m.println("DEBUG: Main loop state transition - up_done=2, up_mode=2 - Engaging 3min wait");
                 device_m.println("U3");
                 lv_textarea_add_text(ui_ota, "\n **Wait 3 min to engage power**");
             }
             else if (up_done == 3 && up_mode == 3)
             {
+                console_m.println("DEBUG: Main loop state transition - up_done=3, up_mode=3 - Power engaged, starting ramp up");
                 device_m.println("U4");
                 lv_textarea_add_text(ui_ota, "\n **Power engaged**");
                 lv_textarea_add_text(ui_ota, "\n ***Ramp UP is start***");
             }
             else if (up_done == 4 && up_mode == 4)
             {
+                console_m.println("DEBUG: Main loop state transition - up_done=4, up_mode=4 - Ramp up complete, switching to control mode");
                 // yazbisiler
                 lv_bar_set_value(ui_opb, (int)u_target_current, LV_ANIM_ON);
                 device_m.println("U6");
