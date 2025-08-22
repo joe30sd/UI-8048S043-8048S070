@@ -71,11 +71,22 @@ int dataLine = 1;
 unsigned long diag_counter = 0, diag_target = 0  ;
 
 String currentDataFile;     // file name to be written in that session
+bool sd_card_available = false;  // Track SD card availability
 
 String nextDataFilename()   // returns the name /dataN.txt
 {
+  if (!sd_card_available) {
+    console_m.println("SD card not available - returning default filename");
+    return String("/data1.txt");
+  }
+  
   uint16_t maxIdx = 0;
   File root = SD.open("/");
+  if (!root) {
+    console_m.println("Failed to open root directory - returning default filename");
+    return String("/data1.txt");
+  }
+  
   for (File e = root.openNextFile(); e; e = root.openNextFile()) {
     String n = e.name();            // e.g., "data3.txt"
     if (!e.isDirectory() &&
@@ -249,15 +260,18 @@ void setup() {
   
   // Initialize SD card first before any SD operations
   if (!SD.begin(chipSelect)) {
-    console_m.println("Card Mount Failed");
-    return;
+    console_m.println("WARNING: SD Card Mount Failed - continuing without SD logging");
+    sd_card_available = false;
+  } else {
+    uint8_t cardType = SD.cardType();
+    if (cardType == CARD_NONE) {
+      console_m.println("WARNING: No SD card attached - continuing without SD logging");
+      sd_card_available = false;
+    } else {
+      console_m.println("SD card initialized successfully");
+      sd_card_available = true;
+    }
   }
-  uint8_t cardType = SD.cardType();
-  if (cardType == CARD_NONE) {
-    console_m.println("No SD card attached");
-    return;
-  }
-  console_m.println("SD card initialized.");
   
   display_updater = EEPROM.read(0);
 
@@ -269,9 +283,11 @@ void setup() {
     console_m.println("UPDATE START");
     performOTAUpdate();
     
-    currentDataFile = nextDataFilename();         
-    console_m.print("Log file: ");
-    console_m.println(currentDataFile);
+    if (sd_card_available) {
+      currentDataFile = nextDataFilename();         
+      console_m.print("Log file: ");
+      console_m.println(currentDataFile);
+    }
   }
 
   gui_start();
@@ -301,6 +317,27 @@ bool hasChanged() {
 void saving_data() {
   static unsigned long startMillis = millis();   // 00:00:00 referance
   if (!hasChanged()) return;                     // exit if there is no change
+
+  // Always update the last values even if SD is not available
+  last_o_timer             = o_timer;
+  last_live_magnet_current = live_magnet_current;
+  last_live_magnet_voltage = live_magnet_voltage;
+  last_magnet_current      = magnet_current;
+  last_magnet_voltage      = magnet_voltage;
+  last_resistor_value      = resistor_value;
+  last_main_voltage        = main_voltage;
+  last_rda_voltage         = rda_voltage;
+  last_att_voltage         = att_voltage;
+  last_ts_voltage          = ts_voltage;
+  last_att_relay           = att_relay;
+  last_rda_relay           = rda_relay;
+  last_main_relay          = main_relay;
+  last_display_mode        = display_mode;
+  
+  if (!sd_card_available) {
+    // console_m.println("SD card not available - skipping data save");
+    return;  // Skip SD operations if card is not available
+  }
 
   // calculate HH:MM:SS
   unsigned long elapsed = (millis() - startMillis) / 1000;
@@ -337,21 +374,6 @@ void saving_data() {
     file.close();
     console_m.print("Saved to "); console_m.println(currentDataFile);
     dataLine++;
-
-    last_o_timer             = o_timer;
-    last_live_magnet_current = live_magnet_current;
-    last_live_magnet_voltage = live_magnet_voltage;
-    last_magnet_current      = magnet_current;
-    last_magnet_voltage      = magnet_voltage;
-    last_resistor_value      = resistor_value;
-    last_main_voltage        = main_voltage;
-    last_rda_voltage         = rda_voltage;
-    last_att_voltage         = att_voltage;
-    last_ts_voltage          = ts_voltage;
-    last_att_relay           = att_relay;
-    last_rda_relay           = rda_relay;
-    last_main_relay          = main_relay;
-    last_display_mode        = display_mode;
   } else {
     console_m.print("Cannot open "); console_m.println(currentDataFile);
   }
@@ -360,12 +382,21 @@ void saving_data() {
 
 /*---- Dumps the last 4 data*.txt files ----*/
 void dumpLast4DataFiles() {
+  if (!sd_card_available) {
+    Serial.println("DUMP ERR - SD card not available");
+    return;
+  }
+  
   struct FileInfo { uint16_t idx; String name; };
   FileInfo files[20];      // we expect at max 20 files
   uint8_t  count = 0;
 
   /* 1) collect the data*.txt files*/
   File root = SD.open("/");
+  if (!root) {
+    Serial.println("DUMP ERR - Cannot open root directory");
+    return;
+  }
   for (File e = root.openNextFile(); e; e = root.openNextFile()) {
     if (e.isDirectory()) { e.close(); continue; }
 
