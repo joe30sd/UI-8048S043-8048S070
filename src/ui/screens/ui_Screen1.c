@@ -7,33 +7,49 @@
 
 void ui_Screen1_screen_init(void)
 {
-ui_Screen1 = lv_obj_create(NULL);
-lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_bg_color(ui_Screen1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_bg_opa(ui_Screen1, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+    ui_Screen1 = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Screen1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Screen1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Screen1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-ui_Image1 = lv_img_create(ui_Screen1);
-lv_img_set_src(ui_Image1, &ui_img_1_png);
-lv_obj_set_width( ui_Image1, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Image1, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_Image1, -1 );
-lv_obj_set_y( ui_Image1, 0 );
-lv_obj_set_align( ui_Image1, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_Image1, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_Image1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_img_set_pivot(ui_Image1,403,225);
+    ui_Image1 = lv_img_create(ui_Screen1);
+    lv_img_set_src(ui_Image1, &ui_img_1_png);
+    lv_obj_set_width(ui_Image1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Image1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Image1, -1);
+    lv_obj_set_y(ui_Image1, 0);
+    lv_obj_set_align(ui_Image1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(ui_Image1, 403, 225);
 
-ui_mbft = lv_label_create(ui_Screen1);
-lv_obj_set_width( ui_mbft, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_mbft, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_mbft, 1 );
-lv_obj_set_y( ui_mbft, 212 );
-lv_obj_set_align( ui_mbft, LV_ALIGN_CENTER );
-lv_label_set_text(ui_mbft,"* Main Board Communiaction Fail! *");
-lv_obj_add_flag( ui_mbft, LV_OBJ_FLAG_HIDDEN );   /// Flags
-lv_obj_set_style_text_color(ui_mbft, lv_color_hex(0xE71212), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_text_opa(ui_mbft, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
-lv_obj_set_style_text_font(ui_mbft, &lv_font_montserrat_24, LV_PART_MAIN| LV_STATE_DEFAULT);
+    ui_mbft = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_mbft, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_mbft, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_mbft, 1);
+    lv_obj_set_y(ui_mbft, 212);
+    lv_obj_set_align(ui_mbft, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_mbft, "* Main Board Communiaction Fail! *");
+    lv_obj_add_flag(ui_mbft, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_set_style_text_color(ui_mbft, lv_color_hex(0xE71212), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_mbft, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_mbft, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_DisplayFwVersion = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_DisplayFwVersion, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_DisplayFwVersion, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_DisplayFwVersion, 293);
+    lv_obj_set_y(ui_DisplayFwVersion, 200);
+    lv_obj_set_align(ui_DisplayFwVersion, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_DisplayFwVersion, "Display Firmware: 1.0.1");
+
+    ui_Label57 = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_Label57, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label57, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label57, 278);
+    lv_obj_set_y(ui_Label57, 222);
+    lv_obj_set_align(ui_Label57, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label57, "Main Board Firmware: 1.0.1");
 
 
 }

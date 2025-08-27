@@ -4,4 +4,3 @@
 // Project name: MRI2
 
 #include "ui.h"
-

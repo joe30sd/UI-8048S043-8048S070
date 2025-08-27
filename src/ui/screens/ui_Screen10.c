@@ -7,46 +7,46 @@
 
 void ui_Screen10_screen_init(void)
 {
-ui_Screen10 = lv_obj_create(NULL);
-lv_obj_clear_flag( ui_Screen10, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_bg_color(ui_Screen10, lv_color_hex(0xE6F2F6), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_bg_opa(ui_Screen10, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+    ui_Screen10 = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Screen10, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Screen10, lv_color_hex(0xE6F2F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Screen10, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-ui_Button27 = lv_btn_create(ui_Screen10);
-lv_obj_set_width( ui_Button27, 100);
-lv_obj_set_height( ui_Button27, 100);
-lv_obj_set_x( ui_Button27, 0 );
-lv_obj_set_y( ui_Button27, 115 );
-lv_obj_set_align( ui_Button27, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_Button27, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
-lv_obj_clear_flag( ui_Button27, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_bg_color(ui_Button27, lv_color_hex(0x32C670), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_bg_opa(ui_Button27, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
-lv_obj_set_style_bg_img_src( ui_Button27, &ui_img_2088487156, LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_bg_img_recolor(ui_Button27, lv_color_hex(0xE6F2F6), LV_PART_MAIN| LV_STATE_DEFAULT);
-lv_obj_set_style_bg_img_recolor_opa(ui_Button27, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+    ui_Button27 = lv_btn_create(ui_Screen10);
+    lv_obj_set_width(ui_Button27, 100);
+    lv_obj_set_height(ui_Button27, 100);
+    lv_obj_set_x(ui_Button27, 0);
+    lv_obj_set_y(ui_Button27, 115);
+    lv_obj_set_align(ui_Button27, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Button27, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_Button27, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Button27, lv_color_hex(0x32C670), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Button27, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Button27, &ui_img_2088487156, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_recolor(ui_Button27, lv_color_hex(0xE6F2F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_recolor_opa(ui_Button27, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-ui_Image4 = lv_img_create(ui_Screen10);
-lv_img_set_src(ui_Image4, &ui_img_25948186);
-lv_obj_set_width( ui_Image4, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Image4, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_Image4, 0 );
-lv_obj_set_y( ui_Image4, -116 );
-lv_obj_set_align( ui_Image4, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_Image4, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_Image4, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+    ui_Image4 = lv_img_create(ui_Screen10);
+    lv_img_set_src(ui_Image4, &ui_img_25948186);
+    lv_obj_set_width(ui_Image4, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Image4, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Image4, 0);
+    lv_obj_set_y(ui_Image4, -116);
+    lv_obj_set_align(ui_Image4, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image4, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-ui_Label7 = lv_label_create(ui_Screen10);
-lv_obj_set_width( ui_Label7, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Label7, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_Label7, 1 );
-lv_obj_set_y( ui_Label7, 6 );
-lv_obj_set_align( ui_Label7, LV_ALIGN_CENTER );
-lv_label_set_text(ui_Label7,"Probe Check Fail, Check Coil Connection!");
-lv_obj_set_style_text_color(ui_Label7, lv_color_hex(0xC53031), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_text_opa(ui_Label7, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
-lv_obj_set_style_text_font(ui_Label7, &lv_font_montserrat_36, LV_PART_MAIN| LV_STATE_DEFAULT);
+    ui_Label7 = lv_label_create(ui_Screen10);
+    lv_obj_set_width(ui_Label7, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label7, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label7, 1);
+    lv_obj_set_y(ui_Label7, 6);
+    lv_obj_set_align(ui_Label7, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label7, "Probe Check Fail, Check Coil Connection!");
+    lv_obj_set_style_text_color(ui_Label7, lv_color_hex(0xC53031), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Label7, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label7, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-lv_obj_add_event_cb(ui_Button27, ui_event_Button27, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Button27, ui_event_Button27, LV_EVENT_ALL, NULL);
 
 }
