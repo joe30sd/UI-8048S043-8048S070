@@ -42,6 +42,7 @@ const int chipSelect = 10;
 
 //#define SELF_TEST_ON
 int minutesPassed = 0, o_timer = 0 ;
+unsigned long park_mode_start_time = 0, last_timestamp_display = 0;
 float live_magnet_current = 0, live_magnet_voltage = 0, magnet_current = 0, magnet_voltage = 0, resistor_value = 0;
 float main_voltage = 0, main_current = 0, att_current = 0, rda_current = 0, rda_voltage = 0, att_voltage = 0,ts_voltage = 0, c_clb1 = 0, c_clb2 = 0 , c_clb3 = 0, v_clb1 = 0;
 int self_tester = 17,self_tester_counter = 0, display_mode_flag = 0,rdf_flag = 0;
@@ -452,6 +453,8 @@ void reset_variables(){
     #endif
 minutesPassed = 0;
 o_timer = 0 ;
+park_mode_start_time = 0;
+last_timestamp_display = 0;
 live_magnet_current = 0;
 live_magnet_voltage = 0;
 magnet_current = 0;
@@ -977,6 +980,12 @@ void confirm_yes(lv_event_t *e)
             //lv_textarea_add_text(ui_tta, "\n  Axial Coil OFF");
             lv_textarea_add_text(ui_tta, "\n  Wait 3 min for park");
             lv_obj_clear_flag(ui_Spinner1, LV_OBJ_FLAG_HIDDEN);
+            
+            // Initialize park mode timestamp tracking
+            park_mode_start_time = millis();
+            last_timestamp_display = park_mode_start_time;
+            console_m.print("Park mode started at: ");
+            console_m.println(park_mode_start_time);
             
             
         }
@@ -2034,6 +2043,26 @@ device_footprint = 51;
             }
             else if (up_mode > 5 && up_mode < 10)
             {
+                // Display timestamp every 15 seconds during park mode (up_mode 7, 8, or 9)
+                if ((up_mode == 7 || up_mode == 8 || up_mode == 9) && park_mode_start_time > 0) {
+                    unsigned long current_time = millis();
+                    console_m.print("Park mode timestamp check: ");
+                    console_m.print(current_time - last_timestamp_display);
+                    console_m.println("ms since last display");
+                    
+                    if (current_time - last_timestamp_display >= 15000) { // 15 seconds
+                        unsigned long elapsed_seconds = (current_time - park_mode_start_time) / 1000;
+                        unsigned long minutes = elapsed_seconds / 60;
+                        unsigned long seconds = elapsed_seconds % 60;
+                        
+                        char timestamp_buffer[64];
+                        sprintf(timestamp_buffer, "\n  Time elapsed: %02lu:%02lu", minutes, seconds);
+                        lv_textarea_add_text(ui_tta, timestamp_buffer);
+                        console_m.println("Timestamp displayed");
+                        
+                        last_timestamp_display = current_time;
+                    }
+                }
 
                 lv_spinbox_set_value(ui_tcda, live_magnet_current * 100);
                 lv_spinbox_set_value(ui_tvda, live_magnet_voltage * 100);
@@ -2063,6 +2092,9 @@ device_footprint = 51;
             }
             else if (up_mode == 10)
             {
+                // Reset park mode timestamp tracking
+                park_mode_start_time = 0;
+                last_timestamp_display = 0;
 
                 lv_obj_add_flag(ui_Spinner1, LV_OBJ_FLAG_HIDDEN);
                 usleep(1000);
