@@ -14,8 +14,8 @@
 
 #define EEPROM_SIZE 1 
 
-const char* ssid = "Modric";
-const char* password = "arctic9744";
+const char* ssid = "mpsone";
+const char* password = "mpsone1234";
  
 
 #define FOUR_ON
@@ -36,7 +36,7 @@ int update_counter = 0 , display_updater = 0 ;
 unsigned long update_timer = 0;
 
 // Firmware URL (raw GitHub link for direct binary download)
-const char* firmwareUrl = "https://raw.githubusercontent.com/byronin/rnn-bins/main/firmware.bin";
+const char* firmwareUrl = "https://github.com/joe30sd/UI-8048S043-8048S070/releases/tag/V1.0.0";
 
 const int chipSelect = 10;
 
