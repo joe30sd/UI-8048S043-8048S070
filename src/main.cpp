@@ -11,11 +11,12 @@
 #include <HTTPClient.h>
 #include <Update.h>
 #include <EEPROM.h>
+#include <WiFiClientSecure.h>
 
 #define EEPROM_SIZE 1 
 
-const char* ssid = "Modric";
-const char* password = "arctic9744";
+const char* ssid = "mpsone";
+const char* password = "mpsone1234";
  
 
 #define FOUR_ON
@@ -36,13 +37,12 @@ int update_counter = 0 , display_updater = 0 ;
 unsigned long update_timer = 0;
 
 // Firmware URL (raw GitHub link for direct binary download)
-const char* firmwareUrl = "https://raw.githubusercontent.com/byronin/rnn-bins/main/firmware.bin";
+const char* firmwareUrl = "https://github.com/joe30sd/UI-8048S043-8048S070/releases/latest/download/firmware.bin";
 
 const int chipSelect = 10;
 
 //#define SELF_TEST_ON
 int minutesPassed = 0, o_timer = 0 ;
-unsigned long park_mode_start_time = 0, last_timestamp_display = 0;
 float live_magnet_current = 0, live_magnet_voltage = 0, magnet_current = 0, magnet_voltage = 0, resistor_value = 0;
 float main_voltage = 0, main_current = 0, att_current = 0, rda_current = 0, rda_voltage = 0, att_voltage = 0,ts_voltage = 0, c_clb1 = 0, c_clb2 = 0 , c_clb3 = 0, v_clb1 = 0;
 int self_tester = 17,self_tester_counter = 0, display_mode_flag = 0,rdf_flag = 0;
@@ -96,79 +96,85 @@ void performOTAUpdate() {
   // Step 1: Connect to WiFi
   console_m.println("Connecting to WiFi...");
   WiFi.begin(ssid, password);
-  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     console_m.print(".");
   }
   console_m.println("\nConnected to WiFi");
 
-  // Step 2: Download and apply firmware
+  // Step 2: Download and apply firmware (HTTPS)
+  WiFiClientSecure client;
+
+  // ---- SECURITY OPTIONS ----
+  // QUICK START (not secure against MITM - good for initial bringup):
+  client.setInsecure();
+
+  // PRODUCTION (uncomment and provide a real CA instead of setInsecure):
+  // static const char rootCACert[] PROGMEM = R"EOF(
+  // -----BEGIN CERTIFICATE-----
+  // ... your PEM root CA for githubusercontent.com / github.com ...
+  // -----END CERTIFICATE-----
+  // )EOF";
+  // client.setCACert(rootCACert);
+  // --------------------------
+
   HTTPClient http;
-  
-  // Initialize HTTP client with the firmware URL
-  http.begin(firmwareUrl);
-  
-  // Send GET request
+  http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS); // GitHub redirects to objects.githubusercontent.com
+  http.setTimeout(30000); // 30s per operation is typical for OTA
+  if (!http.begin(client, firmwareUrl)) {                 // <— use secure client here
+    console_m.println("HTTP begin() failed");
+    display_updater = 4; 
+    EEPROM.write(0, display_updater); EEPROM.commit();
+    return;
+  }
+
   int httpCode = http.GET();
-  
-  if (httpCode == HTTP_CODE_OK) { // HTTP 200
-    int contentLength = http.getSize();
-    
-    if (contentLength > 0) {
-      // Prepare OTA update with the firmware size
-      bool canBegin = Update.begin(contentLength);
-      
-      if (canBegin) {
-        console_m.println("Starting OTA update...");
-        WiFiClient* stream = http.getStreamPtr();
-        
-        // Write the firmware stream to the Update library
-        size_t written = Update.writeStream(*stream);
-        
-        if (written == contentLength) {
-          console_m.println("Written : " + String(written) + " bytes successfully");
-        } else {
-          console_m.println("Written only : " + String(written) + "/" + String(contentLength) + " bytes");
-          http.end();
-          return;
-        }
-        
-        // Finalize the update
-        if (Update.end()) {      
-        console_m.println("OTA update completed!");
-          if (Update.isFinished()) {
-            console_m.println("Update successful. Rebooting...");
-            display_updater = 8; 
-            EEPROM.write(0, display_updater);
-            EEPROM.commit();
-            ESP.restart(); // Restart ESP32 to boot into new firmware
-          } else {
-            console_m.println("Update not finished. Something went wrong!");
-            display_updater = 7; 
-            EEPROM.write(0, display_updater);
-            EEPROM.commit();
-          }
-        } else {
-          console_m.println("Update error: #" + String(Update.getError()));
-        }
+  if (httpCode == HTTP_CODE_OK) { // 200
+    int contentLength = http.getSize(); // may be -1 (chunked)
+
+    // Prepare OTA (allow unknown size if chunked)
+    bool canBegin = (contentLength > 0) ? Update.begin(contentLength)
+                                        : Update.begin(UPDATE_SIZE_UNKNOWN);
+    if (!canBegin) {
+      console_m.println("Not enough space to begin OTA update");
+      display_updater = 6; EEPROM.write(0, display_updater); EEPROM.commit();
+      http.end();
+      return;
+    }
+
+    console_m.println("Starting OTA update...");
+    WiFiClient *stream = http.getStreamPtr();
+    size_t written = Update.writeStream(*stream);
+
+    // If size was known, you can compare; if unknown, just check >0
+    if ((contentLength > 0 && written == (size_t)contentLength) || (contentLength <= 0 && written > 0)) {
+      console_m.println("Written : " + String(written) + " bytes successfully");
+    } else {
+      console_m.println("Written only : " + String(written) + "/" + String(contentLength));
+      http.end();
+      return;
+    }
+
+    if (Update.end()) {
+      console_m.println("OTA update completed!");
+      if (Update.isFinished()) {
+        console_m.println("Update successful. Rebooting...");
+        display_updater = 8; EEPROM.write(0, display_updater); EEPROM.commit();
+        http.end();
+        ESP.restart();
       } else {
-        console_m.println("Not enough space to begin OTA update");
-        display_updater = 6; 
-        EEPROM.write(0, display_updater);
-        EEPROM.commit();
+        console_m.println("Update not finished. Something went wrong!");
+        display_updater = 7; EEPROM.write(0, display_updater); EEPROM.commit();
       }
     } else {
-      console_m.println("Firmware size is invalid (<= 0)");
+      console_m.println("Update error: #" + String(Update.getError()));
+      display_updater = 7; EEPROM.write(0, display_updater); EEPROM.commit();
     }
   } else {
     console_m.println("HTTP error: " + String(httpCode));
-    display_updater = 4; 
-    EEPROM.write(0, display_updater);
-    EEPROM.commit();
+    display_updater = 4; EEPROM.write(0, display_updater); EEPROM.commit();
   }
-  
-  // Clean up
+
   http.end();
 }
 
