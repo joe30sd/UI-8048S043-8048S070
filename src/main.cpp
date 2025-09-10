@@ -2124,7 +2124,7 @@ device_footprint = 51;
                     
                 }
 
-                if(minutesPassed > 3 && rdf_flag == 2 ){
+                if(minutesPassed > 2 && rdf_flag == 2 ){
                     rdf_flag = 3;
                     lv_textarea_add_text(ui_ota, "\n Ramp Down Start");
                 }
