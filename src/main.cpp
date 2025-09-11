@@ -280,16 +280,21 @@ void setup() {
 
   gui_start();
 
-  if (!SD.begin(chipSelect)) {
-    console_m.println("Card Mount Failed");
-    return;
+  // Initialize SD card with retry logic to prevent message flooding
+  static bool sd_initialized = false;
+  if (!sd_initialized) {
+    if (!SD.begin(chipSelect)) {
+      console_m.println("Card Mount Failed");
+      return;
+    }
+    uint8_t cardType = SD.cardType();
+    if (cardType == CARD_NONE) {
+      console_m.println("No SD card attached");
+      return;
+    }
+    console_m.println("SD card initialized.");
+    sd_initialized = true;
   }
-  uint8_t cardType = SD.cardType();
-  if (cardType == CARD_NONE) {
-    console_m.println("No SD card attached");
-    return;
-  }
-  console_m.println("SD card initialized.");
 
 
 }
