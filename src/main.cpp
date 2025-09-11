@@ -75,8 +75,17 @@ String currentDataFile;     // file name to be written in that session
 
 String nextDataFilename()   // returns the name /dataN.txt
 {
+  // Check if SD card is available before attempting file operations
+  if (SD.cardType() == CARD_NONE) {
+    return "/data1.txt"; // Default filename if SD card not available
+  }
+  
   uint16_t maxIdx = 0;
   File root = SD.open("/");
+  if (!root) {
+    return "/data1.txt"; // Default filename if root can't be opened
+  }
+  
   for (File e = root.openNextFile(); e; e = root.openNextFile()) {
     String n = e.name();            // e.g., "data3.txt"
     if (!e.isDirectory() &&
@@ -323,6 +332,11 @@ bool hasChanged() {
 void saving_data() {
   static unsigned long startMillis = millis();   // 00:00:00 referance
   if (!hasChanged()) return;                     // exit if there is no change
+  
+  // Check if SD card is available before attempting file operations
+  if (SD.cardType() == CARD_NONE) {
+    return; // SD card not available, skip saving
+  }
 
   // calculate HH:MM:SS
   unsigned long elapsed = (millis() - startMillis) / 1000;
@@ -382,12 +396,22 @@ void saving_data() {
 
 /*---- Dumps the last 4 data*.txt files ----*/
 void dumpLast4DataFiles() {
+  // Check if SD card is available before attempting file operations
+  if (SD.cardType() == CARD_NONE) {
+    Serial.println("DUMP ERR: No SD card");
+    return;
+  }
+  
   struct FileInfo { uint16_t idx; String name; };
   FileInfo files[20];      // we expect at max 20 files
   uint8_t  count = 0;
 
   /* 1) collect the data*.txt files*/
   File root = SD.open("/");
+  if (!root) {
+    Serial.println("DUMP ERR: Cannot open root");
+    return;
+  }
   for (File e = root.openNextFile(); e; e = root.openNextFile()) {
     if (e.isDirectory()) { e.close(); continue; }
 
