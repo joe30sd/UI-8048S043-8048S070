@@ -366,6 +366,11 @@ void saving_data() {
   doc["display_mode"]        = display_mode;
   doc["footprint"]           = device_footprint;
 
+  // Ensure currentDataFile has a valid path starting with '/'
+  if (currentDataFile.length() == 0 || !currentDataFile.startsWith("/")) {
+    return; // Invalid file path, skip saving
+  }
+  
   File file = SD.open(currentDataFile, FILE_APPEND);     //<< changed
   if (file) {
     serializeJson(doc, file);
