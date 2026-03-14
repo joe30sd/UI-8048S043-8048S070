@@ -5,3 +5,218 @@
 
 #include "ui.h"
 
+
+void mccb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rccb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void pccb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void pqcb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void pfcb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void dbb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void sccb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mbub_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void dbub_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void map_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rupb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rdpb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void dpb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void attob_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void axrb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void t1rb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void t2rb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mainrb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rdarb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void msvd_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mscd_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mpsob_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mpsi_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void mbb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void usb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void ucb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rurcb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void probe_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void ossb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void oob_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rub_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rdhelper_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void tob_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void tscd_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void dsb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void dcb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void rda_enb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void confirm_yes(lv_event_t * e)
+{
+	// Your code here
+}
+
+void confirm_no(lv_event_t * e)
+{
+	// Your code here
+}
+
+void gbb_event(lv_event_t * e)
+{
+	// Your code here
+}
+
+void select_file(lv_event_t * e)
+{
+	// Your code here
+}
+
+void Delete_file(lv_event_t * e)
+{
+	// Your code here
+}
+
+void sent_to_server(lv_event_t * e)
+{
+	// Your code here
+}

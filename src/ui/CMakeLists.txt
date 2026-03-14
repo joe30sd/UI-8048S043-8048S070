@@ -19,8 +19,8 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_next_png.c
     images/ui_img_play_stop_png.c
     images/ui_img_2088487156.c
+    images/ui_img_down_png.c
     images/ui_img_cancel_png.c
-    images/ui_img_25948186.c
     images/ui_img_5_png.c)
 
 add_library(ui ${SOURCES})
